@@ -1,0 +1,587 @@
+# Build a Professional Cloud-Based Mini Mart POS System
+
+You are a Senior Full-Stack Software Engineer and UI/UX Designer. Your task is to design and develop a modern, secure, scalable, cloud-based Point of Sale (POS) System for a mini mart.
+
+## Technology Stack
+
+Frontend:
+
+* Next.js 15 (App Router)
+* React 19
+* TypeScript
+* Tailwind CSS 4
+* Shadcn/UI
+* Lucide React Icons
+* React Hook Form
+* Zod Validation
+
+Backend:
+
+* Next.js API Routes
+* Prisma ORM
+
+Database:
+
+* PostgreSQL
+
+Authentication:
+
+* JWT Authentication
+* HTTP-only Cookies
+* Role-Based Access Control
+
+Cloud:
+
+* Vercel (Frontend)
+* Supabase PostgreSQL (Database)
+
+State Management:
+
+* React Context API
+
+Charts:
+
+* Recharts
+
+Printing:
+
+* Browser Receipt Printing
+* 80mm Thermal Receipt Support
+
+Barcode:
+
+* USB Barcode Scanner Support
+* Manual Barcode Entry
+* Barcode Generation
+
+Currency:
+
+* Ghana Cedi (GHS)
+
+Time Zone:
+
+* Africa/Accra
+
+---
+
+# System Roles
+
+1. Owner (Super Admin)
+2. Manager
+3. Cashier
+
+Each role must have different permissions.
+
+---
+
+# Authentication
+
+Secure Login
+
+Forgot Password
+
+Reset Password
+
+Remember Me
+
+Session Management
+
+Profile Management
+
+Password Change
+
+---
+
+# Owner Dashboard
+
+Display:
+
+Today's Sales
+
+Weekly Sales
+
+Monthly Sales
+
+Annual Sales
+
+Profit
+
+Expenses
+
+Top Selling Products
+
+Low Stock Products
+
+Out of Stock Products
+
+Recent Transactions
+
+Cashier Performance
+
+Sales Chart
+
+Inventory Value
+
+Daily Revenue Graph
+
+Notifications
+
+---
+
+# Cashier Dashboard
+
+Start Shift
+
+End Shift
+
+Open Register
+
+Close Register
+
+New Sale
+
+Suspend Sale
+
+Resume Sale
+
+Hold Cart
+
+Apply Discount
+
+Void Item
+
+Return Item
+
+Refund Sale
+
+Print Receipt
+
+Reprint Receipt
+
+Customer Search
+
+Customer Registration
+
+Barcode Scan
+
+Product Search
+
+Multiple Payment Methods
+
+Cash
+
+Mobile Money
+
+Card
+
+Split Payment
+
+---
+
+# Inventory Module
+
+Categories
+
+Brands
+
+Suppliers
+
+Products
+
+Barcode
+
+SKU
+
+Batch Number
+
+Expiry Date
+
+Purchase Price
+
+Selling Price
+
+Profit Margin
+
+Current Stock
+
+Minimum Stock
+
+Stock Alerts
+
+Stock Adjustment
+
+Stock Transfer
+
+Stock History
+
+Bulk Product Import (Excel)
+
+Export Products
+
+---
+
+# Sales Module
+
+New Sale
+
+Sales History
+
+Invoice History
+
+Receipt Printing
+
+Sales Report
+
+Returns
+
+Refunds
+
+Cancelled Sales
+
+Discount Report
+
+Tax Report
+
+Profit Report
+
+---
+
+# Customers Module
+
+Customer Registration
+
+Customer List
+
+Purchase History
+
+Outstanding Balance
+
+Loyalty Points
+
+Customer Notes
+
+Phone Number
+
+Email
+
+Address
+
+---
+
+# Supplier Module
+
+Supplier Registration
+
+Purchase Orders
+
+Supplier Payments
+
+Supplier History
+
+Outstanding Balances
+
+---
+
+# Reports
+
+Daily Report
+
+Weekly Report
+
+Monthly Report
+
+Yearly Report
+
+Inventory Report
+
+Profit Report
+
+Loss Report
+
+Sales by Product
+
+Sales by Category
+
+Sales by Cashier
+
+Sales by Customer
+
+Sales by Payment Method
+
+Low Stock Report
+
+Stock Movement Report
+
+---
+
+# Notifications
+
+Low Stock
+
+Out of Stock
+
+Daily Sales Summary
+
+Large Transaction Alert
+
+New Cashier Login
+
+Failed Login Attempt
+
+Purchase Order Received
+
+---
+
+# Settings
+
+Business Name
+
+Business Logo
+
+Business Address
+
+Phone Number
+
+Email
+
+TIN Number
+
+VAT Settings
+
+Receipt Header
+
+Receipt Footer
+
+Currency
+
+Timezone
+
+Dark Mode
+
+Light Mode
+
+Backup Database
+
+Restore Database
+
+---
+
+# Receipt Design
+
+Business Logo
+
+Business Name
+
+Address
+
+Phone
+
+Cashier Name
+
+Invoice Number
+
+Date & Time
+
+Items Purchased
+
+Quantity
+
+Unit Price
+
+Discount
+
+Tax
+
+Subtotal
+
+Grand Total
+
+Amount Paid
+
+Change
+
+Thank You Message
+
+QR Code
+
+---
+
+# Mobile Owner Dashboard
+
+The Owner should be able to monitor the business remotely from any Android or iPhone browser.
+
+The dashboard should display:
+
+Live Sales
+
+Current Cashier
+
+Current Transaction
+
+Daily Revenue
+
+Monthly Revenue
+
+Low Stock
+
+Recent Sales
+
+Inventory Value
+
+Top Products
+
+Sales Graph
+
+Profit Graph
+
+Notifications
+
+---
+
+# Security
+
+Encrypted Passwords
+
+JWT Authentication
+
+HTTPS Ready
+
+SQL Injection Protection
+
+CSRF Protection
+
+Input Validation
+
+Audit Logs
+
+Activity Logs
+
+Role Permissions
+
+---
+
+# UI Requirements
+
+Professional Design
+
+Fast
+
+Responsive
+
+Modern
+
+Dark Mode
+
+Light Mode
+
+Smooth Animations
+
+Dashboard Cards
+
+Beautiful Charts
+
+Modern Tables
+
+Search Everywhere
+
+Pagination
+
+Loading Skeletons
+
+Toast Notifications
+
+Confirmation Dialogs
+
+---
+
+# Database Design
+
+Create a normalized PostgreSQL database using Prisma with models for:
+
+Users
+
+Roles
+
+Products
+
+Categories
+
+Brands
+
+Customers
+
+Suppliers
+
+Sales
+
+Sale Items
+
+Inventory
+
+Stock Movements
+
+Payments
+
+Expenses
+
+Purchase Orders
+
+Notifications
+
+Audit Logs
+
+Settings
+
+---
+
+# Additional Features
+
+Offline mode with automatic synchronization when internet is restored.
+
+Automatic cloud backup.
+
+Multi-branch support (future-ready).
+
+Employee attendance tracking.
+
+Expense tracking.
+
+Profit calculation.
+
+Printable reports.
+
+Excel import/export.
+
+CSV export.
+
+PDF report generation.
+
+Barcode label printing.
+
+Dashboard analytics.
+
+System activity logs.
+
+---
+
+# Code Quality
+
+Use clean architecture.
+
+Use reusable components.
+
+Use TypeScript throughout.
+
+Use proper folder structure.
+
+Write optimized code.
+
+Follow Next.js best practices.
+
+Include comments where necessary.
+
+Handle all errors gracefully.
+
+Ensure the application is production-ready and scalable.
+
+Generate the project step by step, beginning with the folder structure, Prisma schema, database models, authentication, and then each module in sequence. Do not skip any implementation details.

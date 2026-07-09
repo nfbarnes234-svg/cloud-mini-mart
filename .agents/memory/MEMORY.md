@@ -1,0 +1,3 @@
+- [Drizzle numeric string coercion](drizzle-numeric-coercion.md) — pg driver returns numeric columns as strings; Zod response schemas expecting number need explicit Number() conversion.
+- [TS project reference stale dist](ts-project-reference-stale-dist.md) — "no exported member" errors for code that exists in src can mean a referenced lib's dist/*.d.ts is stale; rebuild with tsc -b instead of assuming the export is missing.
+- [api-client-react import convention](api-client-react-imports.md) — hooks and types both export from the package root, not a /src/generated or .schemas subpath.

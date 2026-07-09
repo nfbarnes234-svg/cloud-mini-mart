@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Mini Mart POS"
+version = "1.0.0"
+id = "artifacts/minimart-pos"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25331
+
+[services.development]
+run = "pnpm --filter @workspace/minimart-pos run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/minimart-pos", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/minimart-pos/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25331"
+BASE_PATH = "/"
