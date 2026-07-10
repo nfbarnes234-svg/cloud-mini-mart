@@ -73,6 +73,26 @@ paths:
                 $ref: "#/components/schemas/User"
         "401":
           description: Not authenticated
+    patch:
+      operationId: updateMe
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileInput"
+      responses:
+        "200":
+          description: Updated current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input
+        "401":
+          description: Not authenticated
 
   /users:
     get:
@@ -535,6 +555,19 @@ paths:
                 items:
                   $ref: "#/components/schemas/TopProduct"
 
+  /dashboard/cashier-summary:
+    get:
+      operationId: getCashierDashboardSummary
+      tags: [dashboard]
+      summary: Personal sales summary for the current cashier
+      responses:
+        "200":
+          description: Cashier dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CashierDashboardSummary"
+
   /dashboard/low-stock:
     get:
       operationId: getLowStockProducts
@@ -652,6 +685,13 @@ components:
         email: { type: string }
         password: { type: string }
 
+    UpdateProfileInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        currentPassword: { type: string }
+        newPassword: { type: string, minLength: 6 }
+
     Category:
       type: object
       required: [id, name, createdAt]
@@ -714,7 +754,7 @@ components:
       properties:
         name: { type: string, minLength: 1 }
         barcode: { type: string }
-        categoryId: { type: integer }
+        categoryId: { type: ["integer", "null"] }
         purchasePrice: { type: number }
         sellingPrice: { type: number }
         stock: { type: integer }
@@ -925,3 +965,25 @@ components:
       properties:
         paymentMethod: { type: string }
         total: { type: number }
+
+    RecentSale:
+      type: object
+      required: [id, invoiceNumber, total, itemCount, createdAt]
+      properties:
+        id: { type: integer }
+        invoiceNumber: { type: string }
+        total: { type: number }
+        itemCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    CashierDashboardSummary:
+      type: object
+      required: [mySalesToday, myTransactionsToday, myWeekSales, recentSales]
+      properties:
+        mySalesToday: { type: number }
+        myTransactionsToday: { type: integer }
+        myWeekSales: { type: number }
+        recentSales:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecentSale"

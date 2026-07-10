@@ -146,10 +146,11 @@ router.patch(
       return;
     }
 
-    const { purchasePrice, sellingPrice, ...rest } = parsed.data;
+    const { purchasePrice, sellingPrice, categoryId, ...rest } = parsed.data;
     const updates: Record<string, unknown> = { ...rest };
     if (purchasePrice !== undefined) updates.purchasePrice = String(purchasePrice);
     if (sellingPrice !== undefined) updates.sellingPrice = String(sellingPrice);
+    if (categoryId !== undefined) updates.categoryId = categoryId;
 
     const [product] = await db
       .update(productsTable)

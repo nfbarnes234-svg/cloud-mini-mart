@@ -44,6 +44,27 @@ export const GetMeResponse = zod.object({
 })
 
 
+
+export const updateMeBodyNewPasswordMin = 6;
+
+
+
+export const UpdateMeBody = zod.object({
+  "name": zod.string().min(1).optional(),
+  "currentPassword": zod.string().optional(),
+  "newPassword": zod.string().min(updateMeBodyNewPasswordMin).optional()
+})
+
+export const UpdateMeResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "email": zod.string(),
+  "role": zod.enum(['owner', 'manager', 'cashier']),
+  "active": zod.boolean(),
+  "createdAt": zod.coerce.date()
+})
+
+
 export const ListUsersResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string(),
@@ -239,7 +260,7 @@ export const UpdateProductParams = zod.object({
 export const UpdateProductBody = zod.object({
   "name": zod.string().min(1).optional(),
   "barcode": zod.string().optional(),
-  "categoryId": zod.number().optional(),
+  "categoryId": zod.number().nullish(),
   "purchasePrice": zod.number().optional(),
   "sellingPrice": zod.number().optional(),
   "stock": zod.number().optional(),
@@ -605,6 +626,23 @@ export const GetTopProductsResponseItem = zod.object({
   "revenue": zod.number()
 })
 export const GetTopProductsResponse = zod.array(GetTopProductsResponseItem)
+
+
+/**
+ * @summary Personal sales summary for the current cashier
+ */
+export const GetCashierDashboardSummaryResponse = zod.object({
+  "mySalesToday": zod.number(),
+  "myTransactionsToday": zod.number(),
+  "myWeekSales": zod.number(),
+  "recentSales": zod.array(zod.object({
+  "id": zod.number(),
+  "invoiceNumber": zod.string(),
+  "total": zod.number(),
+  "itemCount": zod.number(),
+  "createdAt": zod.coerce.date()
+}))
+})
 
 
 export const GetLowStockProductsResponseItem = zod.object({

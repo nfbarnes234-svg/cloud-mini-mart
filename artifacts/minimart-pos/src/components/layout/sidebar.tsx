@@ -2,6 +2,7 @@ import * as React from "react"
 import { Link, useLocation } from "wouter"
 import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
+import { COMPANY_NAME } from "@/lib/company"
 import { 
   LayoutDashboard, 
   ShoppingCart, 
@@ -11,6 +12,7 @@ import {
   CreditCard, 
   BarChart3, 
   Settings, 
+  UserCog,
   LogOut 
 } from "lucide-react"
 
@@ -24,7 +26,7 @@ export function Sidebar() {
   const isOwner = user.role === 'owner';
 
   const navItems = [
-    ...(isOwnerOrManager ? [{ icon: LayoutDashboard, label: "Dashboard", href: "/" }] : []),
+    { icon: LayoutDashboard, label: "Dashboard", href: "/" },
     { icon: ShoppingCart, label: "Point of Sale", href: "/pos" },
     ...(isOwnerOrManager ? [
       { icon: Package, label: "Inventory", href: "/inventory" },
@@ -33,16 +35,17 @@ export function Sidebar() {
       { icon: CreditCard, label: "Expenses", href: "/expenses" },
       { icon: BarChart3, label: "Reports", href: "/reports" },
     ] : []),
-    ...(isOwner ? [{ icon: Settings, label: "Staff", href: "/staff" }] : []),
+    ...(isOwner ? [{ icon: UserCog, label: "Staff", href: "/staff" }] : []),
+    { icon: Settings, label: "Settings", href: "/settings" },
   ];
 
   return (
     <div className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen fixed left-0 top-0 border-r border-sidebar-border shadow-xl">
       <div className="p-6 flex items-center gap-3">
         <div className="w-8 h-8 rounded bg-primary flex items-center justify-center font-bold text-white shadow-sm">
-          MM
+          T&H
         </div>
-        <h1 className="font-bold text-lg tracking-tight">Mini Mart</h1>
+        <h1 className="font-bold text-lg tracking-tight">{COMPANY_NAME}</h1>
       </div>
       
       <div className="px-4 pb-4">

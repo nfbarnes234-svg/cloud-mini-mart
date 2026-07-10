@@ -10,7 +10,8 @@ export interface ProductUpdate {
   /** @minLength 1 */
   name?: string;
   barcode?: string;
-  categoryId?: number;
+  /** @nullable */
+  categoryId?: number | null;
   purchasePrice?: number;
   sellingPrice?: number;
   stock?: number;

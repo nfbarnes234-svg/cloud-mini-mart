@@ -61,10 +61,10 @@ export default function Inventory() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
+      const hasCategory = !!formData.categoryId && formData.categoryId !== "none";
+      const base = {
         name: formData.name,
         barcode: formData.barcode || undefined,
-        categoryId: formData.categoryId && formData.categoryId !== "none" ? Number(formData.categoryId) : undefined,
         purchasePrice: Number(formData.purchasePrice),
         sellingPrice: Number(formData.sellingPrice),
         stock: Number(formData.stock),
@@ -73,10 +73,15 @@ export default function Inventory() {
       };
 
       if (editingProduct) {
-        await updateProduct.mutateAsync({ id: editingProduct.id, data: payload });
+        await updateProduct.mutateAsync({
+          id: editingProduct.id,
+          data: { ...base, categoryId: hasCategory ? Number(formData.categoryId) : null },
+        });
         toast({ title: "Product updated" });
       } else {
-        await createProduct.mutateAsync({ data: payload });
+        await createProduct.mutateAsync({
+          data: { ...base, categoryId: hasCategory ? Number(formData.categoryId) : undefined },
+        });
         toast({ title: "Product created" });
       }
       

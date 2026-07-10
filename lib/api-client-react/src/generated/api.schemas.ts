@@ -51,6 +51,14 @@ export interface LoginInput {
   password: string;
 }
 
+export interface UpdateProfileInput {
+  /** @minLength 1 */
+  name?: string;
+  currentPassword?: string;
+  /** @minLength 6 */
+  newPassword?: string;
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -96,7 +104,8 @@ export interface ProductUpdate {
   /** @minLength 1 */
   name?: string;
   barcode?: string;
-  categoryId?: number;
+  /** @nullable */
+  categoryId?: number | null;
   purchasePrice?: number;
   sellingPrice?: number;
   stock?: number;
@@ -259,6 +268,21 @@ export interface CashierSalesBreakdown {
 export interface PaymentMethodBreakdown {
   paymentMethod: string;
   total: number;
+}
+
+export interface RecentSale {
+  id: number;
+  invoiceNumber: string;
+  total: number;
+  itemCount: number;
+  createdAt: string;
+}
+
+export interface CashierDashboardSummary {
+  mySalesToday: number;
+  myTransactionsToday: number;
+  myWeekSales: number;
+  recentSales: RecentSale[];
 }
 
 export type ListProductsParams = {

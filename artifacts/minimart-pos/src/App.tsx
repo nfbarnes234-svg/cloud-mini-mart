@@ -13,6 +13,8 @@ import Sales from '@/pages/sales';
 import Expenses from '@/pages/expenses';
 import Reports from '@/pages/reports';
 import Staff from '@/pages/staff';
+import Settings from '@/pages/settings';
+import CashierDashboard from '@/pages/cashier-dashboard';
 
 const queryClient = new QueryClient();
 
@@ -28,10 +30,15 @@ function ProtectedRoute({ component: Component, allowedRoles }: { component: Rea
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Redirect to={user.role === 'cashier' ? '/pos' : '/'} />;
+    return <Redirect to={user.role === 'cashier' ? '/' : '/'} />;
   }
 
   return <Component />;
+}
+
+function Home() {
+  const { user } = useAuth();
+  return user?.role === 'cashier' ? <CashierDashboard /> : <Dashboard />;
 }
 
 function Router() {
@@ -41,7 +48,10 @@ function Router() {
       
       {/* Protected Routes */}
       <Route path="/">
-        <ProtectedRoute component={Dashboard} allowedRoles={['owner', 'manager']} />
+        <ProtectedRoute component={Home} />
+      </Route>
+      <Route path="/settings">
+        <ProtectedRoute component={Settings} />
       </Route>
       <Route path="/pos">
         <ProtectedRoute component={POS} />

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { COMPANY_NAME, COMPANY_TAGLINE } from "@/lib/company";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -42,7 +43,7 @@ export default function Login() {
           <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white mb-4 shadow-lg shadow-primary/20">
             <ShoppingCart className="w-6 h-6" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Mini Mart POS</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{COMPANY_NAME}</h1>
           <p className="text-muted-foreground mt-2">Sign in to your account</p>
         </div>
 
@@ -96,7 +97,7 @@ export default function Login() {
         </div>
         
         <p className="text-center text-sm text-muted-foreground mt-8">
-          Secure Retail Management System
+          {COMPANY_TAGLINE}
         </p>
       </div>
     </div>

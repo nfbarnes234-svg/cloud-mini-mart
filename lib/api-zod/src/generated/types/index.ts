@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './cashierDashboardSummary';
 export * from './cashierSalesBreakdown';
 export * from './category';
 export * from './categoryInput';
@@ -27,6 +28,7 @@ export * from './paymentMethodBreakdown';
 export * from './product';
 export * from './productInput';
 export * from './productUpdate';
+export * from './recentSale';
 export * from './role';
 export * from './sale';
 export * from './saleInput';
@@ -36,6 +38,7 @@ export * from './saleItemInput';
 export * from './salesChartPoint';
 export * from './stockAdjustmentInput';
 export * from './topProduct';
+export * from './updateProfileInput';
 export * from './user';
 export * from './userInput';
 export * from './userUpdate';

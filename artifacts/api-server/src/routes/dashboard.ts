@@ -14,6 +14,7 @@ import {
   GetTopProductsQueryParams,
   GetTopProductsResponse,
   GetLowStockProductsResponse,
+  GetCashierDashboardSummaryResponse,
 } from "@workspace/api-zod";
 import { requireRole } from "../lib/auth";
 
@@ -222,6 +223,81 @@ router.get(
           sellingPrice: Number(r.sellingPrice),
         })),
       ),
+    );
+  },
+);
+
+router.get(
+  "/dashboard/cashier-summary",
+  requireRole("cashier"),
+  async (req, res): Promise<void> => {
+    const cashierId = req.currentUser!.id;
+    const now = new Date();
+    const today = startOfDay(now);
+    const weekStart = new Date(today);
+    weekStart.setDate(weekStart.getDate() - 7);
+
+    async function sumMySalesSince(since: Date): Promise<number> {
+      const [row] = await db
+        .select({ total: sql<string>`coalesce(sum(${salesTable.total}), 0)` })
+        .from(salesTable)
+        .where(
+          and(
+            eq(salesTable.cashierId, cashierId),
+            gte(salesTable.createdAt, since),
+            eq(salesTable.status, "completed"),
+          ),
+        );
+      return Number(row?.total ?? 0);
+    }
+
+    const [mySalesToday, myWeekSales] = await Promise.all([
+      sumMySalesSince(today),
+      sumMySalesSince(weekStart),
+    ]);
+
+    const [transactionsRow] = await db
+      .select({ count: sql<string>`count(*)` })
+      .from(salesTable)
+      .where(
+        and(
+          eq(salesTable.cashierId, cashierId),
+          gte(salesTable.createdAt, today),
+          eq(salesTable.status, "completed"),
+        ),
+      );
+
+    const recent = await db
+      .select({
+        id: salesTable.id,
+        invoiceNumber: salesTable.invoiceNumber,
+        total: salesTable.total,
+        createdAt: salesTable.createdAt,
+        itemCount: sql<string>`coalesce((select sum(${saleItemsTable.quantity}) from ${saleItemsTable} where ${saleItemsTable.saleId} = ${salesTable.id}), 0)`,
+      })
+      .from(salesTable)
+      .where(
+        and(
+          eq(salesTable.cashierId, cashierId),
+          eq(salesTable.status, "completed"),
+        ),
+      )
+      .orderBy(sql`${salesTable.createdAt} desc`)
+      .limit(5);
+
+    res.json(
+      GetCashierDashboardSummaryResponse.parse({
+        mySalesToday,
+        myWeekSales,
+        myTransactionsToday: Number(transactionsRow?.count ?? 0),
+        recentSales: recent.map((r) => ({
+          id: r.id,
+          invoiceNumber: r.invoiceNumber,
+          total: Number(r.total),
+          itemCount: Number(r.itemCount),
+          createdAt: r.createdAt,
+        })),
+      }),
     );
   },
 );
