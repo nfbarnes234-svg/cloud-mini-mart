@@ -64,7 +64,7 @@ export default function Inventory() {
       const payload = {
         name: formData.name,
         barcode: formData.barcode || undefined,
-        categoryId: formData.categoryId ? Number(formData.categoryId) : undefined,
+        categoryId: formData.categoryId && formData.categoryId !== "none" ? Number(formData.categoryId) : undefined,
         purchasePrice: Number(formData.purchasePrice),
         sellingPrice: Number(formData.sellingPrice),
         stock: Number(formData.stock),
@@ -82,8 +82,9 @@ export default function Inventory() {
       
       queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
       setIsFormOpen(false);
-    } catch (err) {
-      toast({ title: "Error saving product", variant: "destructive" });
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || "Please check the form and try again.";
+      toast({ title: "Error saving product", description: message, variant: "destructive" });
     }
   };
 
