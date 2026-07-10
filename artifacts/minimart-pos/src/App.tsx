@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { Route, Switch, Router as WouterRouter, Redirect } from 'wouter';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { OfflineSyncProvider } from '@/hooks/use-offline-sync';
 
 // Pages
 import Login from '@/pages/login';
@@ -88,7 +89,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <AuthProvider>
-          <Router />
+          <OfflineSyncProvider>
+            <Router />
+          </OfflineSyncProvider>
         </AuthProvider>
       </WouterRouter>
       <Toaster />

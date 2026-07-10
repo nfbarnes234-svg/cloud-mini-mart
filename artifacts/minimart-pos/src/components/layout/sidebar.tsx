@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link, useLocation } from "wouter"
 import { useAuth } from "@/hooks/use-auth"
+import { useOfflineSync } from "@/hooks/use-offline-sync"
 import { cn } from "@/lib/utils"
 import { COMPANY_NAME } from "@/lib/company"
 import { 
@@ -13,12 +14,15 @@ import {
   BarChart3, 
   Settings, 
   UserCog,
-  LogOut 
+  LogOut,
+  WifiOff,
+  RefreshCw
 } from "lucide-react"
 
 export function Sidebar() {
   const [location] = useLocation()
   const { user, logout } = useAuth()
+  const { isOnline, pendingCount, isSyncing } = useOfflineSync()
 
   if (!user) return null;
 
@@ -47,6 +51,24 @@ export function Sidebar() {
         </div>
         <h1 className="font-bold text-lg tracking-tight">{COMPANY_NAME}</h1>
       </div>
+
+      {(!isOnline || pendingCount > 0) && (
+        <div className="px-4 pb-4">
+          <div className={cn(
+            "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium",
+            !isOnline ? "bg-destructive/15 text-destructive" : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+          )}>
+            {!isOnline ? <WifiOff className="w-3.5 h-3.5 shrink-0" /> : <RefreshCw className={cn("w-3.5 h-3.5 shrink-0", isSyncing && "animate-spin")} />}
+            <span>
+              {!isOnline
+                ? "Offline — sales are being saved locally"
+                : isSyncing
+                  ? "Syncing offline sales..."
+                  : `${pendingCount} sale${pendingCount > 1 ? "s" : ""} waiting to sync`}
+            </span>
+          </div>
+        </div>
+      )}
       
       <div className="px-4 pb-4">
         <div className="bg-sidebar-accent rounded-lg p-3 text-sm">

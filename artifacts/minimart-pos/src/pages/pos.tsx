@@ -1,14 +1,21 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useListProducts, useCreateSale, useListCustomers } from "@workspace/api-client-react";
 import { formatCurrency, generateId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Minus, X, CreditCard, Banknote, User, Smartphone, History, ArrowLeft, Printer, ShoppingCart } from "lucide-react";
+import { Search, Plus, Minus, X, CreditCard, Banknote, User, Smartphone, History, ArrowLeft, Printer, ShoppingCart, WifiOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/use-auth";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { useOfflineSync } from "@/hooks/use-offline-sync";
+import { setCached, getCached, addPendingSale } from "@/lib/offline-db";
+
+const PRODUCTS_CACHE_KEY = "products:all";
+const CUSTOMERS_CACHE_KEY = "customers:all";
 
 type CartItem = {
   cartItemId: string; // unique for list rendering
@@ -23,6 +30,9 @@ type PaymentMethod = 'cash' | 'mobile_money' | 'card' | 'split';
 
 export default function POS() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const isOnline = useOnlineStatus();
+  const { refreshPendingCount } = useOfflineSync();
   
   // State
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,10 +47,46 @@ export default function POS() {
   // Receipt State
   const [receiptData, setReceiptData] = useState<any>(null);
 
-  // Data
-  const { data: products, isLoading: isLoadingProducts } = useListProducts({ search: searchTerm });
-  const { data: customers } = useListCustomers();
+  // Data — only hit the network while online; when offline we fall back to
+  // whatever was cached the last time the list loaded successfully.
+  const { data: productsFromServer, isLoading: isLoadingProducts } = useListProducts(
+    { search: searchTerm },
+    { query: { enabled: isOnline } },
+  );
+  const { data: customersFromServer } = useListCustomers(undefined, { query: { enabled: isOnline } });
   const createSale = useCreateSale();
+
+  const [cachedProducts, setCachedProducts] = useState<any[] | undefined>(undefined);
+  const [cachedCustomers, setCachedCustomers] = useState<any[] | undefined>(undefined);
+
+  // Persist the freshest server data for offline use.
+  useEffect(() => {
+    if (productsFromServer) {
+      setCached(PRODUCTS_CACHE_KEY, productsFromServer);
+    }
+  }, [productsFromServer]);
+
+  useEffect(() => {
+    if (customersFromServer) {
+      setCached(CUSTOMERS_CACHE_KEY, customersFromServer);
+    }
+  }, [customersFromServer]);
+
+  // Load cache once on mount so it's available immediately if we go offline.
+  useEffect(() => {
+    getCached<any[]>(PRODUCTS_CACHE_KEY).then(setCachedProducts);
+    getCached<any[]>(CUSTOMERS_CACHE_KEY).then(setCachedCustomers);
+  }, []);
+
+  const allProducts = isOnline ? productsFromServer : cachedProducts;
+  const products = isOnline
+    ? allProducts
+    : allProducts?.filter((p: any) =>
+        !searchTerm ||
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.barcode?.includes(searchTerm),
+      );
+  const customers = isOnline ? customersFromServer : cachedCustomers;
 
   // Derived State
   const subtotal = useMemo(() => cart.reduce((acc, item) => acc + (item.price * item.quantity), 0), [cart]);
@@ -101,22 +147,68 @@ export default function POS() {
   };
 
   const handleCheckout = async () => {
+    const payload = {
+      customerId: customerId || undefined,
+      items: cart.map(i => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        unitPrice: i.price,
+        discount: 0
+      })),
+      discount,
+      tax,
+      paymentMethod,
+      amountPaid: Number(amountPaid)
+    };
+
+    if (!isOnline) {
+      // No connection — save the sale locally and let it sync automatically
+      // once the network is back. Stock/receipt are shown from a local
+      // snapshot; the server total is authoritative once synced.
+      const localId = generateId();
+      const now = new Date().toISOString();
+      const receiptPreview = {
+        invoiceNumber: `OFFLINE-${localId.toUpperCase()}`,
+        createdAt: now,
+        cashierName: user?.name || "",
+        items: cart.map(i => ({
+          id: i.cartItemId,
+          productName: i.name,
+          quantity: i.quantity,
+          unitPrice: i.price,
+          lineTotal: i.price * i.quantity
+        })),
+        subtotal,
+        total,
+        amountPaid: Number(amountPaid),
+        changeDue,
+        paymentMethod
+      };
+
+      await addPendingSale({ localId, createdAt: now, payload, receiptPreview });
+      await refreshPendingCount();
+
+      // Optimistically reduce the cached product stock so subsequent offline
+      // sales don't oversell the same item before syncing.
+      if (cachedProducts) {
+        const updated = cachedProducts.map((p: any) => {
+          const cartItem = cart.find(i => i.productId === p.id);
+          return cartItem ? { ...p, stock: p.stock - cartItem.quantity } : p;
+        });
+        setCachedProducts(updated);
+        await setCached(PRODUCTS_CACHE_KEY, updated);
+      }
+
+      setReceiptData(receiptPreview);
+      setIsCheckoutOpen(false);
+      clearCart();
+      setAmountPaid("");
+      toast({ title: "Sale saved offline", description: "It will sync automatically once you're back online." });
+      return;
+    }
+
     try {
-      const result = await createSale.mutateAsync({
-        data: {
-          customerId: customerId || undefined,
-          items: cart.map(i => ({
-            productId: i.productId,
-            quantity: i.quantity,
-            unitPrice: i.price,
-            discount: 0
-          })),
-          discount,
-          tax,
-          paymentMethod,
-          amountPaid: Number(amountPaid)
-        }
-      });
+      const result = await createSale.mutateAsync({ data: payload });
       
       setReceiptData(result);
       setIsCheckoutOpen(false);
