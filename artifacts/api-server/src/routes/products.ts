@@ -84,10 +84,13 @@ router.post(
       return;
     }
 
+    const sku = `SKU-${Date.now().toString(36).toUpperCase()}`;
+
     const [product] = await db
       .insert(productsTable)
       .values({
         ...parsed.data,
+        sku,
         purchasePrice: String(parsed.data.purchasePrice),
         sellingPrice: String(parsed.data.sellingPrice),
       })

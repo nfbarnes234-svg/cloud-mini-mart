@@ -83,8 +83,6 @@ export interface Product {
 export interface ProductInput {
   /** @minLength 1 */
   name: string;
-  /** @minLength 1 */
-  sku: string;
   barcode?: string;
   categoryId?: number;
   purchasePrice: number;
@@ -97,8 +95,6 @@ export interface ProductInput {
 export interface ProductUpdate {
   /** @minLength 1 */
   name?: string;
-  /** @minLength 1 */
-  sku?: string;
   barcode?: string;
   categoryId?: number;
   purchasePrice?: number;

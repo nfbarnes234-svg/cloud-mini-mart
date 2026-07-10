@@ -9,8 +9,6 @@
 export interface ProductInput {
   /** @minLength 1 */
   name: string;
-  /** @minLength 1 */
-  sku: string;
   barcode?: string;
   categoryId?: number;
   purchasePrice: number;

@@ -31,7 +31,7 @@ export default function Inventory() {
   
   // Form state
   const [formData, setFormData] = useState({
-    name: "", sku: "", barcode: "", categoryId: "",
+    name: "", barcode: "", categoryId: "",
     purchasePrice: "", sellingPrice: "", stock: "", minStock: "", unit: "pcs"
   });
 
@@ -40,7 +40,6 @@ export default function Inventory() {
       setEditingProduct(product);
       setFormData({
         name: product.name,
-        sku: product.sku,
         barcode: product.barcode || "",
         categoryId: product.categoryId?.toString() || "",
         purchasePrice: product.purchasePrice.toString(),
@@ -52,7 +51,7 @@ export default function Inventory() {
     } else {
       setEditingProduct(null);
       setFormData({
-        name: "", sku: "", barcode: "", categoryId: "",
+        name: "", barcode: "", categoryId: "",
         purchasePrice: "", sellingPrice: "", stock: "", minStock: "", unit: "pcs"
       });
     }
@@ -64,7 +63,6 @@ export default function Inventory() {
     try {
       const payload = {
         name: formData.name,
-        sku: formData.sku,
         barcode: formData.barcode || undefined,
         categoryId: formData.categoryId ? Number(formData.categoryId) : undefined,
         purchasePrice: Number(formData.purchasePrice),
@@ -200,16 +198,17 @@ export default function Inventory() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2 col-span-2">
+                  <Label>Barcode</Label>
+                  <Input
+                    autoFocus
+                    placeholder="Scan barcode or type manually"
+                    value={formData.barcode}
+                    onChange={e => setFormData({...formData, barcode: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2 col-span-2">
                   <Label>Product Name</Label>
                   <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label>SKU</Label>
-                  <Input required value={formData.sku} onChange={e => setFormData({...formData, sku: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Barcode</Label>
-                  <Input value={formData.barcode} onChange={e => setFormData({...formData, barcode: e.target.value})} />
                 </div>
                 <div className="space-y-2 col-span-2">
                   <Label>Category</Label>

@@ -698,10 +698,9 @@ components:
 
     ProductInput:
       type: object
-      required: [name, sku, purchasePrice, sellingPrice, stock, minStock, unit]
+      required: [name, purchasePrice, sellingPrice, stock, minStock, unit]
       properties:
         name: { type: string, minLength: 1 }
-        sku: { type: string, minLength: 1 }
         barcode: { type: string }
         categoryId: { type: integer }
         purchasePrice: { type: number }
@@ -714,7 +713,6 @@ components:
       type: object
       properties:
         name: { type: string, minLength: 1 }
-        sku: { type: string, minLength: 1 }
         barcode: { type: string }
         categoryId: { type: integer }
         purchasePrice: { type: number }
