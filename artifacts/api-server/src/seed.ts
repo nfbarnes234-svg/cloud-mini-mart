@@ -17,12 +17,13 @@ async function main() {
   }
 
   const passwordHash = await bcrypt.hash("password123", 10);
+  const ownerPasswordHash = await bcrypt.hash("Space@789", 10);
 
   await db.insert(usersTable).values([
     {
       name: "Ama Owusu",
-      email: "owner@minimart.gh",
-      passwordHash,
+      email: "torks.hyll@gmail.com",
+      passwordHash: ownerPasswordHash,
       role: "owner",
     },
     {
