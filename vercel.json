@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "artifacts/minimart-pos/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    { "src": "^/assets/(.*)", "dest": "/artifacts/minimart-pos/dist/assets/$1" },
+    { "src": "^/(.*)$", "dest": "/artifacts/minimart-pos/dist/$1" }
+  ]
+}
